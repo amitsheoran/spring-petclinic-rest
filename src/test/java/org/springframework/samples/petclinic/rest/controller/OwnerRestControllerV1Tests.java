@@ -623,4 +623,33 @@ class OwnerRestControllerV1Tests {
             .andExpect(status().isNotFound());
     }
 
+    @Test
+    @WithMockUser(roles = "OWNER_ADMIN")
+    void shouldReturnBadRequestWhenAddOwnerWithInvalidTelephone() throws Exception {
+        OwnerDto newOwnerDto = owners.get(0);
+        newOwnerDto.setId(null);
+        newOwnerDto.setTelephone("invalid-phone");
+        ObjectMapper mapper = new ObjectMapper();
+        String newOwnerAsJSON = mapper.writeValueAsString(newOwnerDto);
+        this.mockMvc.perform(post("/api/owners")
+                .content(newOwnerAsJSON)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .accept(MediaType.APPLICATION_JSON_VALUE))
+            .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @WithMockUser(roles = "OWNER_ADMIN")
+    void shouldReturnBadRequestWhenAddOwnerWithBlankNames() throws Exception {
+        OwnerDto newOwnerDto = owners.get(0);
+        newOwnerDto.setId(null);
+        newOwnerDto.setFirstName("");
+        ObjectMapper mapper = new ObjectMapper();
+        String newOwnerAsJSON = mapper.writeValueAsString(newOwnerDto);
+        this.mockMvc.perform(post("/api/owners")
+                .content(newOwnerAsJSON)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .accept(MediaType.APPLICATION_JSON_VALUE))
+            .andExpect(status().isBadRequest());
+    }
 }
